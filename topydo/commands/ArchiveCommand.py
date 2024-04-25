@@ -1,5 +1,6 @@
 # Topydo - A todo.txt client written in Python.
 # Copyright (C) 2014 - 2015 Bram Schoenmakers <bram@topydo.org>
+# Copyright (C) 2024 Niklas Ruecker 
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,23 +15,39 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from topydo.lib.Command import Command
+from topydo.lib.Command import InvalidCommandArgument
+from topydo.lib.Config import config
+from topydo.lib.prettyprinters.Numbers import PrettyPrinterNumbers
+from topydo.lib.TodoListBase import InvalidTodoException
+from topydo.lib.TodoParser import parse_line
+from topydo.lib.WriteCommand import WriteCommand
 
 
-class ArchiveCommand(Command):
-    def __init__(self, p_todolist, p_archive_list):
-        """
-        Constructor.
-
-        p_todolist where all completed items will be moved from.
-        p_archive_list is the list where the items go to. This can be a
-        TodoListBase class which does no dependency checking, so a better
-        choice for huge done.txt files.
-        """
-        super().__init__([], p_todolist)
-        self.archive = p_archive_list
+class ArchiveCommand(WriteCommand):
+    def __init__(self, p_args, p_todolist, #pragma: no branch
+                 p_out=lambda a: None,
+                 p_err=lambda a: None,
+                 p_prompt=lambda a: None):
+        super().__init__(p_args, p_todolist, p_out, p_err,
+                p_prompt)
 
     def execute(self):
-        for todo in [t for t in self.todolist.todos() if t.is_completed()]:
-            self.archive.add_todo(todo)
-            self.todolist.delete(todo)
+        if not super().execute():
+            return False
+
+        try:
+            number = self.argument(0)
+            print(number)
+        except InvalidCommandArgument:
+            self.error(self.usage())
+        except InvalidTodoException:
+            self.error("Invalid todo number given.")
+
+    def usage(self):
+        return """Synopsis: archive <NUMBER>"""
+
+    def help(self):
+        return """\
+Archives the todo indicated by NUMBER.\
+"""
+

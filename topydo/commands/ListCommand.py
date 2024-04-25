@@ -41,7 +41,7 @@ class ListCommand(ExpressionCommand):
         self.printer = None
         self.sort_expression = config().sort_string()
         self.group_expression = config().group_string()
-        self.show_all = False
+        self.show_all = config().list_show_all()
         self.ids = None
         self.format = config().list_format()
 

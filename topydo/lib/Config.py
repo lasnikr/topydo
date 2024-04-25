@@ -52,6 +52,7 @@ class _Config:
         """
         self.sections = [
             'add',
+            'do',
             'aliases',
             'colorscheme',
             'column_keymap',
@@ -70,6 +71,7 @@ class _Config:
                 'force_colors': '0',
                 'filename': 'todo.txt',
                 'archive_filename': 'done.txt',
+                'archive': '1',
                 'identifiers': 'linenumber',
                 'identifier_alphabet': '0123456789abcdefghijklmnopqrstuvwxyz',
                 'backup_count': '5',
@@ -80,10 +82,15 @@ class _Config:
                 'auto_creation_date': '1',
             },
 
+            'do': {
+                'do_archive': '1',
+            },
+
             'ls': {
                 'hide_tags': 'id,p,ical',
                 'hidden_item_tags': 'h,hide',
                 'indent': '0',
+                'show_all': '0',
                 'list_limit': '-1',
                 'list_format': '|%I| %x %{(}p{)} %c %s %k %{due:}d %{t:}t',
             },
@@ -280,6 +287,12 @@ class _Config:
         except ValueError:
             return int(self.defaults['ls']['indent'])
 
+    def list_show_all(self):
+        try:
+            return self.cp.getboolean('ls', 'list_show_all')
+        except ValueError:
+            return self.defaults['ls']['list_show_all'] == '0' 
+
     def keep_sorted(self):
         try:
             return self.cp.getboolean('sort', 'keep_sorted')
@@ -407,6 +420,12 @@ class _Config:
             return self.cp.getboolean('add', 'auto_creation_date')
         except ValueError:
             return self.defaults['add']['auto_creation_date'] == '1'
+
+    def do_archive(self):
+        try:
+            return self.cp.getboolean('do', 'do_archive')
+        except ValueError:
+            return self.defaults['do']['do_archive'] == '1'
 
     @lru_cache(maxsize=1)
     def aliases(self):

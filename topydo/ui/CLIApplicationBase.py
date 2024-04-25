@@ -173,7 +173,7 @@ class CLIApplicationBase(object):
     def __init__(self):
         self.todolist = TodoList.TodoList([])
         self.todofile = None
-        self.do_archive = True
+        self.do_archive = config().do_archive()
         self._post_archive_action = None
         self.backup = None
 
@@ -232,7 +232,8 @@ class CLIApplicationBase(object):
 
         if archive:
             from topydo.commands.ArchiveCommand import ArchiveCommand
-            command = ArchiveCommand(self.todolist, archive)
+            args = sys.argv[1:]
+            command = ArchiveCommand(args, self.todolist)
             command.execute()
 
             if archive.dirty:
