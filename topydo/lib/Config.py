@@ -120,6 +120,7 @@ class _Config:
                 'project_color': 'red',
                 'context_color': 'magenta',
                 'metadata_color': 'green',
+                'due_colors': 'pa:red,pr:green,fu:blue',
                 'link_color': 'cyan',
                 'priority_colors': 'A:cyan,B:yellow,C:blue',
                 'focus_background_color': 'gray',
@@ -378,6 +379,31 @@ class _Config:
             pri_colors_dict = _str_to_dict(self.defaults['colorscheme']['priority_colors'])
 
         return pri_colors_dict[p_priority] if p_priority in pri_colors_dict else Color('NEUTRAL')
+
+    @lru_cache(maxsize=3)
+    def due_color(self, d_date):
+        """
+        Returns a dict with relative time values (pa=past, pr=present, fu=future) as keys and color numbers as value.
+        """
+        def _str_to_dict(d_string):
+            d_colors_dict = dict()
+            for d_color in d_string.split(','):
+                due, color = d_color.split(':')
+                d_colors_dict[due] = Color(color)
+
+            return d_colors_dict
+
+        try:
+            d_colors_str = self.cp.get('colorscheme', 'due_colors')
+
+            if d_colors_str == '':
+                d_colors_dict = _str_to_dict('pa:-1,pr:-1,fu:-1')
+            else:
+                d_colors_dict = _str_to_dict(d_colors_str)
+        except ValueError:
+            d_colors_dict = _str_to_dict(self.defaults['colorscheme']['due_colors'])
+
+        return d_colors_dict[d_date] if d_date in d_colors_dict else Color('NEUTRAL')
 
     def project_color(self):
         try:

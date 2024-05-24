@@ -20,7 +20,8 @@ Various utility functions.
 
 import re
 from collections import namedtuple
-from datetime import date
+import datetime
+from topydo.lib.Config import config
 
 import arrow
 
@@ -35,7 +36,7 @@ def date_string_to_date(p_date):
     if p_date:
         parsed_date = re.match(r'(\d{4})-(\d{2})-(\d{2})', p_date)
         if parsed_date:
-            result = date(
+            result = datetime.date(
                 int(parsed_date.group(1)),  # year
                 int(parsed_date.group(2)),  # month
                 int(parsed_date.group(3))   # day
@@ -108,8 +109,23 @@ def translate_key_to_config(p_key):
 
     return key
 
+def colorize_due(d_date, str_date):
+    """
+    Returns the ansi escape code for the given due date based on the config file
+    """
+    current_date = datetime.datetime.now().date()
+
+    if current_date > d_date:
+        t_rel = "pa"
+    elif current_date == d_date:
+        t_rel = "pr"
+    else:
+        t_rel = "fu"
+    
+    return config().due_color(t_rel).as_ansi() + str_date
+
 def humanize_date(p_datetime):
     """ Returns a relative date string from a datetime object. """
     now = arrow.now()
     _date = now.replace(day=p_datetime.day, month=p_datetime.month, year=p_datetime.year)
-    return _date.humanize(now).replace('just now', 'today')
+    return _date.humanize(now).replace('just now', 'today').replace(' ', '-')

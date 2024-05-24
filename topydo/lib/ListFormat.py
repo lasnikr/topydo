@@ -22,7 +22,7 @@ import arrow
 
 from topydo.lib.Config import config
 from topydo.lib.ProgressColor import progress_color
-from topydo.lib.Utils import escape_ansi, get_terminal_size, humanize_date
+from topydo.lib.Utils import escape_ansi, get_terminal_size, humanize_date, colorize_due
 
 MAIN_PATTERN = (r'^({{(?P<before>.+?)}})?'
                 r'(?P<placeholder>{ph}|\[{ph}\])'
@@ -130,7 +130,6 @@ def color_block(p_todo):
         config().priority_color(p_todo.priority()).as_ansi(),
     )
 
-
 class ListFormatError(Exception):
     pass
 
@@ -152,7 +151,7 @@ class ListFormatParser(object):
             'd': lambda t: t.due_date().isoformat() if t.due_date() else '',
 
             # relative due date
-            'D': lambda t: humanize_date(t.due_date()) if t.due_date() else '',
+            'D': lambda t: colorize_due(t.due_date(), humanize_date(t.due_date())) if t.due_date() else '',
 
             # relative dates:  due, start
             'h': lambda t: humanize_dates(t.due_date(), t.start_date()),

@@ -1,6 +1,5 @@
 # Topydo - A todo.txt client written in Python.
 # Copyright (C) 2014 - 2015 Bram Schoenmakers <bram@topydo.org>
-# Copyright (C) 2024 Niklas Ruecker 
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +16,6 @@
 
 from datetime import date
 
-from topydo.lib.Config import config
 from topydo.lib.DCommand import DCommand
 from topydo.lib.printers.PrettyPrinter import PrettyPrinter
 from topydo.lib.Recurrence import NoRecurrenceException, advance_recurring_todo
